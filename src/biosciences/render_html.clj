@@ -86,7 +86,7 @@
   Usage: `clojure -M:render-html [out-file]`
   (default `docs/samples/operator-console.html`)."
   (:require [jp-go-dds.skin]
-            [clojure.string :as str]
+            [kotoba.lang.text :as str]
             [biosciences.store :as store]
             [biosciences.actor :as actor]))
 
