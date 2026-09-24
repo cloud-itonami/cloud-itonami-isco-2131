@@ -1,0 +1,34 @@
+;; What this vertical's robot physically does, declared for
+;; kotoba.robotics.process (kotoba-lang/robotics). `kbb -M:physics` runs it.
+;;
+;; README: a field and laboratory research support actor for biodiversity
+;; research, ecological surveys and species monitoring (ISCO 2131), proposing
+;; specimen handling and field-equipment allocation. The physical lab work:
+;; moving frozen specimen boxes out of the -80 C freezer before they warm, and
+;; placing a rack of cryoboxes onto a freezer shelf.
+;;
+;; Every number without a cited source is marked `estimate` in its :basis.
+;; Replacing an estimate with a sourced value is this bot's growth work.
+{:physics/schema "itonami.physical-ai.spec.v1"
+ :repo "cloud-itonami/cloud-itonami-isco-2131"
+ :cases
+ [{:id :frozen-specimen-transfer
+   :kind :thermal
+   :procedure "robot takes a frozen tissue specimen block out of the -80 C freezer and carries it through room air to the dry-ice box"
+   :params {:conductivity-w-mk 2.2 :density-kg-m3 917.0 :specific-heat-j-kgk 2000.0
+            :t0-c -80.0 :t-hot-c 22.0 :h-front-w-m2k 8.0
+            :t-back-ambient-c 22.0 :h-back-w-m2k 0.0
+            :threshold-c -60.0 :duration-s 3600.0 :nodes 6}
+   :sweep {:param :thickness-m :values [0.005 0.01 0.02 0.03 0.04]}
+   :quantity :time-to-threshold-s
+   :limit {:min 300.0 :basis "estimate: five minutes covers picking from the freezer rack and docking in the dry-ice box; -60 C taken as the warm edge for RNA-grade tissue"}
+   :boundary {:lo 0.004 :hi 0.04}}
+  {:id :cryobox-rack-to-shelf
+   :kind :manipulator
+   :procedure "arm places a rack of cryoboxes onto an upper shelf of the upright -80 C freezer"
+   :params {:l1-m 0.45 :l2-m 0.40 :m1-kg 4.0 :m2-kg 3.0
+            :from [0.50 0.05] :to [0.55 0.55] :duration-s 2.5 :steps 500}
+   :sweep {:param :payload-kg :values [0.5 1.0 2.0 3.0 4.0]}
+   :quantity :peak-tau1-nm
+   :limit {:max 60.0 :basis "estimate: continuous shoulder torque of a light collaborative arm (~5 kg class)"}
+   :boundary {:lo 0.1 :hi 20.0}}]}
